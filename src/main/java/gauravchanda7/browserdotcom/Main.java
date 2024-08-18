@@ -32,6 +32,7 @@ public class Main extends Application {
         // Set the title and show the stage
         stage.setTitle("Browser.Com");
         stage.setScene(scene);
+        stage.centerOnScreen();
         stage.show();
     }
 
