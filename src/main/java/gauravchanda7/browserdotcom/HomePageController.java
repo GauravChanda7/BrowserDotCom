@@ -52,25 +52,30 @@ public class HomePageController implements Initializable {
 
     private String tabName;
 
+    private ObservableList<WebHistory.Entry> entries;
+
     @FXML
     void NextWebPage(ActionEvent event) {
-        webHistory = webView.getEngine().getHistory();
+        //webHistory = webView.getEngine().getHistory();
         webHistory.go(+1);
-        ObservableList<WebHistory.Entry> entries = webHistory.getEntries();
+        //ObservableList<WebHistory.Entry> entries = webHistory.getEntries();
         URLTextField.setText(entries.get(webHistory.getCurrentIndex()).getUrl());
+        progressBar.progressProperty().bind(webEngine.getLoadWorker().progressProperty());
     }
 
     @FXML
     void PreviousWebPage(ActionEvent event) {
-        webHistory = webView.getEngine().getHistory();
+        //webHistory = webView.getEngine().getHistory();
         webHistory.go(-1);
-        ObservableList<WebHistory.Entry> entries = webHistory.getEntries();
+        //ObservableList<WebHistory.Entry> entries = webHistory.getEntries();
         URLTextField.setText(entries.get(webHistory.getCurrentIndex()).getUrl());
+        progressBar.progressProperty().bind(webEngine.getLoadWorker().progressProperty());
     }
 
     @FXML
     void ReloadWebPage(ActionEvent event) {
         webEngine.reload();
+        progressBar.progressProperty().bind(webEngine.getLoadWorker().progressProperty());
     }
 
     @FXML
@@ -98,7 +103,13 @@ public class HomePageController implements Initializable {
 
     void LoadURL(){
         //webEngine = webView.getEngine();
-        webEngine.load("https://"+URLTextField.getText());
+        String URL = URLTextField.getText();
+        if (!URLTextField.getText().contains(".com")){
+            URL = URL + ".com";
+        } if (!URLTextField.getText().contains("https://")) {
+            URL = "https://" + URL;
+        }
+        webEngine.load(URL);
         progressBar.progressProperty().bind(webEngine.getLoadWorker().progressProperty());
 
         webEngine.getLoadWorker().stateProperty().addListener((obs, oldValue, newValue) -> {
@@ -112,7 +123,7 @@ public class HomePageController implements Initializable {
 
     String TabName(){
         webHistory = webView.getEngine().getHistory();
-        ObservableList<WebHistory.Entry> entries = webHistory.getEntries();
+        //ObservableList<WebHistory.Entry> entries = webHistory.getEntries();
         tabName = entries.get(webHistory.getCurrentIndex()).getTitle();
         return tabName;
     }
@@ -121,5 +132,7 @@ public class HomePageController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         webEngine = webView.getEngine();
         webEngine.load("https://www.google.com");
+        webHistory = webView.getEngine().getHistory();
+        entries = webHistory.getEntries();
     }
 }
