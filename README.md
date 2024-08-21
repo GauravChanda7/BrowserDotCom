@@ -12,3 +12,4 @@ Functionalities to be Added:
 Tabs
 Tabs + multithreading
 Bookmarks
+History connected with JDBC
