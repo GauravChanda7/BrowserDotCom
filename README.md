@@ -7,7 +7,7 @@ Forward page,
 Back page,
 Zoom in,
 Zoom out,
-Shortcut Keys
+Shortcut Keys,
 
 Functionalities to be Added:
 Tabs,
