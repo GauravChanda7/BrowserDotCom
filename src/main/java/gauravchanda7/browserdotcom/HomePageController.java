@@ -1,5 +1,6 @@
 package gauravchanda7.browserdotcom;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
@@ -9,6 +10,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebHistory;
@@ -132,7 +135,53 @@ public class HomePageController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         webEngine = webView.getEngine();
         webEngine.load("https://www.google.com");
+
         webHistory = webView.getEngine().getHistory();
         entries = webHistory.getEntries();
+
+        ReloadButton.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null){
+                KeyCombination reloadKeyCombination = new KeyCodeCombination(KeyCode.R, KeyCombination.ALT_DOWN);
+                ReloadButton.getScene().getAccelerators().put(reloadKeyCombination, () -> {
+                    ReloadButton.fire();
+                });
+            }
+        });
+
+        ZoomInButton.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null){
+                KeyCombination zoomInKeyCombination = new KeyCodeCombination(KeyCode.EQUALS, KeyCombination.CONTROL_DOWN);
+                ZoomInButton.getScene().getAccelerators().put(zoomInKeyCombination, () -> {
+                    ZoomInButton.fire();
+                });
+            }
+        });
+
+        ZoomOutButton.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null){
+                KeyCombination zoomOutKeyCombination = new KeyCodeCombination(KeyCode.MINUS, KeyCombination.CONTROL_DOWN);
+                ZoomOutButton.getScene().getAccelerators().put(zoomOutKeyCombination, () -> {
+                    ZoomOutButton.fire();
+                });
+            }
+        });
+
+        backButton.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null){
+                KeyCombination backKeyCombination = new KeyCodeCombination(KeyCode.B, KeyCombination.CONTROL_DOWN);
+                backButton.getScene().getAccelerators().put(backKeyCombination, () -> {
+                    backButton.fire();
+                });
+            }
+        });
+
+        forwardButton.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null){
+                KeyCombination forwardKeyCombination = new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN);
+                forwardButton.getScene().getAccelerators().put(forwardKeyCombination, () -> {
+                    forwardButton.fire();
+                });
+            }
+        });
     }
 }
