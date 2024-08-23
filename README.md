@@ -8,9 +8,9 @@ Back page,
 Zoom in,
 Zoom out,
 Shortcut Keys,
+Tabs
 
 Functionalities to be Added:
-Tabs,
-Tabs + multithreading,
 Bookmarks,
-History connected with JDBC
+History connected with JDBC,
+Website name on tabs

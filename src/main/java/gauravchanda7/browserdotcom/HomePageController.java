@@ -53,9 +53,9 @@ public class HomePageController implements Initializable {
 
     private WebHistory webHistory;
 
-    private String tabName;
-
     private ObservableList<WebHistory.Entry> entries;
+
+    private String URL;
 
     @FXML
     void NextWebPage(ActionEvent event) {
@@ -83,6 +83,7 @@ public class HomePageController implements Initializable {
 
     @FXML
     void Search(ActionEvent event) {
+        setURL();
         LoadURL();
     }
 
@@ -90,6 +91,7 @@ public class HomePageController implements Initializable {
     @FXML
     void URLTextBoxEnterPress(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER){
+            setURL();
             LoadURL();
         }
     }
@@ -104,31 +106,48 @@ public class HomePageController implements Initializable {
         webView.setZoom(webView.getZoom() - 0.1);
     }
 
-    void LoadURL(){
+    private void setURL(){
+        URL = URLTextField.getText().trim();
+    }
+
+    private void LoadURL(){
         //webEngine = webView.getEngine();
-        String URL = URLTextField.getText();
-        if (!URLTextField.getText().contains(".com")){
-            URL = URL + ".com";
-        } if (!URLTextField.getText().contains("https://")) {
-            URL = "https://" + URL;
-        }
         webEngine.load(URL);
         progressBar.progressProperty().bind(webEngine.getLoadWorker().progressProperty());
 
         webEngine.getLoadWorker().stateProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue == Worker.State.SUCCEEDED) {
-                System.out.println("WebPage loaded");
+                System.out.println("WebPage loaded: " + URL);
             } else if (newValue == Worker.State.FAILED) {
-                System.out.println("WebPage failed to load");
+                System.out.println("WebPage failed to load: " + URL);
+                if (!URL.contains("https://")) {
+                    URL = "https://" + URL;
+                    LoadURL();
+                } if (!URL.contains("www.")){
+                    URL = URL.substring(0,8) + "www." + URL.substring(8);
+                } if (!URL.contains(".com")){
+                    URL = URL + ".com";
+                    LoadURL();
+                }
             }
         });
     }
 
-    String TabName(){
-        webHistory = webView.getEngine().getHistory();
-        //ObservableList<WebHistory.Entry> entries = webHistory.getEntries();
-        tabName = entries.get(webHistory.getCurrentIndex()).getTitle();
-        return tabName;
+
+
+
+    private void setupKeyShortcuts(Button button, KeyCombination keyCombination) {
+        button.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null){
+                button.getScene().getAccelerators().put(keyCombination, () -> {
+                    button.fire();
+                });
+            }
+        });
+    }
+
+    public String getWebPageTitle() {
+        return webEngine.getTitle() != null ? webEngine.getTitle() : "New Tab";
     }
 
     @Override
@@ -139,49 +158,10 @@ public class HomePageController implements Initializable {
         webHistory = webView.getEngine().getHistory();
         entries = webHistory.getEntries();
 
-        ReloadButton.sceneProperty().addListener((obs, oldScene, newScene) -> {
-            if (newScene != null){
-                KeyCombination reloadKeyCombination = new KeyCodeCombination(KeyCode.R, KeyCombination.ALT_DOWN);
-                ReloadButton.getScene().getAccelerators().put(reloadKeyCombination, () -> {
-                    ReloadButton.fire();
-                });
-            }
-        });
-
-        ZoomInButton.sceneProperty().addListener((obs, oldScene, newScene) -> {
-            if (newScene != null){
-                KeyCombination zoomInKeyCombination = new KeyCodeCombination(KeyCode.EQUALS, KeyCombination.CONTROL_DOWN);
-                ZoomInButton.getScene().getAccelerators().put(zoomInKeyCombination, () -> {
-                    ZoomInButton.fire();
-                });
-            }
-        });
-
-        ZoomOutButton.sceneProperty().addListener((obs, oldScene, newScene) -> {
-            if (newScene != null){
-                KeyCombination zoomOutKeyCombination = new KeyCodeCombination(KeyCode.MINUS, KeyCombination.CONTROL_DOWN);
-                ZoomOutButton.getScene().getAccelerators().put(zoomOutKeyCombination, () -> {
-                    ZoomOutButton.fire();
-                });
-            }
-        });
-
-        backButton.sceneProperty().addListener((obs, oldScene, newScene) -> {
-            if (newScene != null){
-                KeyCombination backKeyCombination = new KeyCodeCombination(KeyCode.B, KeyCombination.CONTROL_DOWN);
-                backButton.getScene().getAccelerators().put(backKeyCombination, () -> {
-                    backButton.fire();
-                });
-            }
-        });
-
-        forwardButton.sceneProperty().addListener((obs, oldScene, newScene) -> {
-            if (newScene != null){
-                KeyCombination forwardKeyCombination = new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN);
-                forwardButton.getScene().getAccelerators().put(forwardKeyCombination, () -> {
-                    forwardButton.fire();
-                });
-            }
-        });
+        setupKeyShortcuts(ReloadButton, new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN));
+        setupKeyShortcuts(ZoomInButton, new KeyCodeCombination(KeyCode.EQUALS, KeyCombination.CONTROL_DOWN));
+        setupKeyShortcuts(ZoomOutButton, new KeyCodeCombination(KeyCode.MINUS, KeyCombination.CONTROL_DOWN));
+        setupKeyShortcuts(backButton, new KeyCodeCombination(KeyCode.B, KeyCombination.CONTROL_DOWN));
+        setupKeyShortcuts(forwardButton, new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN));
     }
 }

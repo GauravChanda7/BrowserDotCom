@@ -16,7 +16,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         // Load the FXML file for the homepage
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("homepage.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("tabpage.fxml"));
         Parent root = loader.load();
         // Set up the scene
         Scene scene = new Scene(root);
