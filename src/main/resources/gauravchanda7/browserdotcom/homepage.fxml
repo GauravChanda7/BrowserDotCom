@@ -7,9 +7,9 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.web.WebView?>
 
-<AnchorPane prefHeight="550.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gauravchanda7.browserdotcom.HomePageController">
+<AnchorPane prefHeight="620.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gauravchanda7.browserdotcom.HomePageController">
    <children>
-      <WebView fx:id="webView" layoutY="50.0" prefHeight="550.0" prefWidth="960.0" />
+      <WebView fx:id="webView" layoutY="50.0" prefHeight="620.0" prefWidth="960.0" />
       <HBox prefHeight="40.0" prefWidth="960.0">
          <children>
             <Button fx:id="backButton" mnemonicParsing="false" onAction="#PreviousWebPage" prefHeight="40.0" prefWidth="40.0" text="⬅" />

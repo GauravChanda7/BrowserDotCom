@@ -8,9 +8,11 @@ Back page,
 Zoom in,
 Zoom out,
 Shortcut Keys,
-Tabs
+Tabs,
+Current Website name on tabs
 
 Functionalities to be Added:
 Bookmarks,
 History connected with JDBC,
-Website name on tabs
+View current website on Terminal,
+Adding 6 most visited websites and their favicon on homepage

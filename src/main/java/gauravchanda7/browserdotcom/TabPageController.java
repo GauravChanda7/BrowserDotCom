@@ -21,6 +21,7 @@ import javafx.scene.web.WebView;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutionException;
 
 public class TabPageController implements Initializable {
 
@@ -36,27 +37,29 @@ public class TabPageController implements Initializable {
     @FXML
     private TabPane tabPane;
 
-    private WebHistory webHistory;
-
-    private int TabCount = 2;
 
     private void createNewTab() {
-        Tab tab = new Tab("Tab"+TabCount++);
+        Tab tab = new Tab("New Tab");
         FXMLLoader loader = new FXMLLoader(getClass().getResource("homepage.fxml"));
-        Pane tabcontent = null;
+        Pane tabContent;
         try {
-            tabcontent = loader.load();
+            tabContent = loader.load();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        tab.setContent(tabcontent);
-        tabPane.getTabs().add(tabPane.getTabs().size()-1,tab);
-        tabPane.getSelectionModel().select(tabPane.getTabs().size()-2);
+
+        HomePageController newTabController = loader.getController();
+        newTabController.updateTabTitle(tab);
+
+        tab.setContent(tabContent);
+        tabPane.getTabs().add(tabPane.getTabs().size() - 1, tab);
+        tabPane.getSelectionModel().select(tabPane.getTabs().size() - 2);
     }
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        homeTab.setText("New Tab");
         FXMLLoader homepage = new FXMLLoader(getClass().getResource("homepage.fxml"));
         try {
             homeTab.setContent(homepage.load());
@@ -64,6 +67,8 @@ public class TabPageController implements Initializable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        HomePageController newTabController = homepage.getController();
+        newTabController.updateTabTitle(homeTab);
 
         newTab.setOnSelectionChanged(event -> {
             if (newTab.isSelected()) {
@@ -82,6 +87,7 @@ public class TabPageController implements Initializable {
                 });
             }
         });
+
     }
 
 }

@@ -1,5 +1,6 @@
 package gauravchanda7.browserdotcom;
 
+
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
@@ -8,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -112,18 +114,16 @@ public class HomePageController implements Initializable {
 
     private void LoadURL(){
         //webEngine = webView.getEngine();
+        if (!URL.contains("https://")) {
+            URL = "https://" + URL;
+        }
         webEngine.load(URL);
         progressBar.progressProperty().bind(webEngine.getLoadWorker().progressProperty());
 
         webEngine.getLoadWorker().stateProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue == Worker.State.SUCCEEDED) {
-                System.out.println("WebPage loaded: " + URL);
-            } else if (newValue == Worker.State.FAILED) {
-                System.out.println("WebPage failed to load: " + URL);
-                if (!URL.contains("https://")) {
-                    URL = "https://" + URL;
-                    LoadURL();
-                } if (!URL.contains("www.")){
+            if (newValue == Worker.State.FAILED) {
+                    System.out.println("WebPage failed to load: " + URL);
+                if (!URL.contains("www.")){
                     URL = URL.substring(0,8) + "www." + URL.substring(8);
                 } if (!URL.contains(".com")){
                     URL = URL + ".com";
@@ -146,8 +146,44 @@ public class HomePageController implements Initializable {
         });
     }
 
-    public String getWebPageTitle() {
-        return webEngine.getTitle() != null ? webEngine.getTitle() : "New Tab";
+
+    public void updateTabTitle(Tab tab) {
+        webEngine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
+            if (newState == Worker.State.SUCCEEDED) {
+                Platform.runLater(() -> {
+                    String title = webEngine.getTitle();
+                    if (title == null || title.isEmpty()) {
+                        title = "New Tab";
+                    }
+                    if (title.length() > 29) {
+                        title = title.substring(0,26) + "...";
+                    }
+                    tab.setText(title);
+                });
+            }
+        });
+    }
+
+    public void showOnCurrentSiteOnTerminal(){
+        webEngine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
+            if (newState == Worker.State.SUCCEEDED) {
+                Platform.runLater(() -> {
+                    String title = webEngine.getTitle();
+                    if (title == null || title.isEmpty()) {
+                        title = "Blank Name";
+                    } else {
+                        System.out.println(title);
+                    }
+                });
+            } else if (newState == Worker.State.FAILED) {
+                System.out.println("Failed to load");
+            }
+        });
+    }
+
+
+    public WebEngine getWebEngine() {
+        return webEngine;
     }
 
     @Override
@@ -163,5 +199,9 @@ public class HomePageController implements Initializable {
         setupKeyShortcuts(ZoomOutButton, new KeyCodeCombination(KeyCode.MINUS, KeyCombination.CONTROL_DOWN));
         setupKeyShortcuts(backButton, new KeyCodeCombination(KeyCode.B, KeyCombination.CONTROL_DOWN));
         setupKeyShortcuts(forwardButton, new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN));
+
+        showOnCurrentSiteOnTerminal();
     }
+
+
 }
