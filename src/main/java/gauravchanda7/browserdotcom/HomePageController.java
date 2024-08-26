@@ -20,6 +20,9 @@ import javafx.scene.web.WebHistory;
 import javafx.scene.web.WebView;
 
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 public class HomePageController implements Initializable {
@@ -65,7 +68,7 @@ public class HomePageController implements Initializable {
         webHistory.go(+1);
         //ObservableList<WebHistory.Entry> entries = webHistory.getEntries();
         URLTextField.setText(entries.get(webHistory.getCurrentIndex()).getUrl());
-        progressBar.progressProperty().bind(webEngine.getLoadWorker().progressProperty());
+        //progressBar.progressProperty().bind(webEngine.getLoadWorker().progressProperty());
     }
 
     @FXML
@@ -74,13 +77,13 @@ public class HomePageController implements Initializable {
         webHistory.go(-1);
         //ObservableList<WebHistory.Entry> entries = webHistory.getEntries();
         URLTextField.setText(entries.get(webHistory.getCurrentIndex()).getUrl());
-        progressBar.progressProperty().bind(webEngine.getLoadWorker().progressProperty());
+        //progressBar.progressProperty().bind(webEngine.getLoadWorker().progressProperty());
     }
 
     @FXML
     void ReloadWebPage(ActionEvent event) {
         webEngine.reload();
-        progressBar.progressProperty().bind(webEngine.getLoadWorker().progressProperty());
+        //progressBar.progressProperty().bind(webEngine.getLoadWorker().progressProperty());
     }
 
     @FXML
@@ -118,7 +121,7 @@ public class HomePageController implements Initializable {
             URL = "https://" + URL;
         }
         webEngine.load(URL);
-        progressBar.progressProperty().bind(webEngine.getLoadWorker().progressProperty());
+        //progressBar.progressProperty().bind(webEngine.getLoadWorker().progressProperty());
 
         webEngine.getLoadWorker().stateProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue == Worker.State.FAILED) {
@@ -181,10 +184,57 @@ public class HomePageController implements Initializable {
         });
     }
 
+    public void InsertStatement(String set_title, String set_url) {
+        DBController db = new DBController();
+        Connection connection = db.getConnection();
 
-    public WebEngine getWebEngine() {
-        return webEngine;
+        if (connection != null) {
+            try {
+                // No need to bind date and time, use SQLite functions directly
+                String insertData = "INSERT INTO browser_history (Site_Title, Site_URL, Site_Visit_Date, Site_Visit_Time) " +
+                        "VALUES (?, ?, DATE('now'), TIME('now'))";
+
+                PreparedStatement statement = connection.prepareStatement(insertData);
+                statement.setString(1, set_title);
+                statement.setString(2, set_url);
+
+                statement.executeUpdate();
+                db.closeConnection();
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
+
+    public void updateProgressBar(){
+        webEngine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
+            if (newState == Worker.State.SUCCEEDED) {
+                progressBar.progressProperty().bind(webEngine.getLoadWorker().progressProperty());
+            }
+        });
+    }
+
+    public void setDataOnDB() {
+        webEngine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
+            if (newState == Worker.State.SUCCEEDED) {
+                Platform.runLater(() -> {
+                    String set_title = webEngine.getTitle();
+                    String set_url = webEngine.getLocation();
+
+                    if (set_title == null || set_title.isEmpty()) {
+                        set_title = "-";
+                    }
+
+                    InsertStatement(set_title, set_url);
+                });
+            } else if (newState == Worker.State.FAILED) {
+                System.out.println("Failed to load");
+            }
+        });
+    }
+
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -201,7 +251,7 @@ public class HomePageController implements Initializable {
         setupKeyShortcuts(forwardButton, new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN));
 
         showOnCurrentSiteOnTerminal();
+        setDataOnDB();
+        updateProgressBar();
     }
-
-
 }
