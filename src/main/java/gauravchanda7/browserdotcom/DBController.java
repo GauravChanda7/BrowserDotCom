@@ -1,6 +1,6 @@
 package gauravchanda7.browserdotcom;
 
-import java.net.URL;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -10,9 +10,10 @@ public class DBController {
     private Connection connection;
 
     public DBController(){
-        String DB_URL = "jdbc:sqlite:C:\\Users\\KIIT\\Desktop\\Project\\BrowserDotCom\\src\\main\\resources\\gauravchanda7\\browserdotcom\\BrowserDB.db";
+        final String dbPath = new File("src/main/resources/gauravchanda7/browserdotcom/BrowserDB.db").getAbsolutePath();
+        final String db_URL = "jdbc:sqlite:" + dbPath;
         try {
-            connection = DriverManager.getConnection(DB_URL);
+            connection = DriverManager.getConnection(db_URL);
             //System.out.println("history.db Connection Successful");
         } catch (SQLException e){
             System.out.println("history.db Connection Failed");

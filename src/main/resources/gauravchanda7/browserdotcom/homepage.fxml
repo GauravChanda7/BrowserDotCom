@@ -7,10 +7,10 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.web.WebView?>
 
-<AnchorPane prefHeight="620.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gauravchanda7.browserdotcom.HomePageController">
+<AnchorPane prefHeight="640.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gauravchanda7.browserdotcom.HomePageController">
    <children>
-      <WebView fx:id="webView" layoutY="50.0" prefHeight="620.0" prefWidth="960.0" />
-      <HBox prefHeight="40.0" prefWidth="960.0">
+      <WebView fx:id="webView" layoutY="50.0" prefHeight="590.0" prefWidth="1000.0" />
+      <HBox prefHeight="40.0" prefWidth="1000.0">
          <children>
             <Button fx:id="backButton" mnemonicParsing="false" onAction="#PreviousWebPage" prefHeight="40.0" prefWidth="40.0" text="⬅" />
             <Button fx:id="forwardButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#NextWebPage" prefHeight="40.0" prefWidth="40.0" text="➡" />
@@ -19,8 +19,9 @@
             <Button fx:id="searchButton" mnemonicParsing="false" onAction="#Search" prefHeight="40.0" prefWidth="40.0" text="🔍" />
             <Button fx:id="ZoomInButton" layoutX="890.0" layoutY="10.0" mnemonicParsing="false" onAction="#ZoomIn" prefHeight="40.0" prefWidth="40.0" text="➕" />
             <Button fx:id="ZoomOutButton" layoutX="930.0" layoutY="10.0" mnemonicParsing="false" onAction="#ZoomOut" prefHeight="40.0" prefWidth="40.0" text="➖" />
+            <Button fx:id="historyButton" mnemonicParsing="false" onAction="#showHistoryPage" prefHeight="40.0" prefWidth="40.0" text="⌛" />
          </children>
       </HBox>
-      <ProgressBar fx:id="progressBar" layoutY="40.0" prefHeight="10.0" prefWidth="960.0" progress="0.0" />
+      <ProgressBar fx:id="progressBar" layoutY="40.0" prefHeight="10.0" prefWidth="1000.0" progress="0.0" />
    </children>
 </AnchorPane>

@@ -7,10 +7,7 @@ import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -18,7 +15,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebHistory;
 import javafx.scene.web.WebView;
-
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -49,6 +45,9 @@ public class HomePageController implements Initializable {
     private Button searchButton;
 
     @FXML
+    private Button historyButton;
+
+    @FXML
     private ProgressBar progressBar;
 
     @FXML
@@ -61,6 +60,13 @@ public class HomePageController implements Initializable {
     private ObservableList<WebHistory.Entry> entries;
 
     private String URL;
+
+    private TabPageController tabPageController;
+
+
+    void setURLTextField(String HistoryURL){
+        URLTextField.setText(HistoryURL);
+    }
 
     @FXML
     void NextWebPage(ActionEvent event) {
@@ -87,7 +93,7 @@ public class HomePageController implements Initializable {
     }
 
     @FXML
-    void Search(ActionEvent event) {
+    public void Search(ActionEvent event) {
         setURL();
         LoadURL();
     }
@@ -111,11 +117,11 @@ public class HomePageController implements Initializable {
         webView.setZoom(webView.getZoom() - 0.1);
     }
 
-    private void setURL(){
+    public void setURL(){
         URL = URLTextField.getText().trim();
     }
 
-    private void LoadURL(){
+    public void LoadURL(){
         //webEngine = webView.getEngine();
         if (!URL.contains("https://")) {
             URL = "https://" + URL;
@@ -136,9 +142,6 @@ public class HomePageController implements Initializable {
         });
     }
 
-
-
-
     private void setupKeyShortcuts(Button button, KeyCombination keyCombination) {
         button.sceneProperty().addListener((obs, oldScene, newScene) -> {
             if (newScene != null){
@@ -148,7 +151,6 @@ public class HomePageController implements Initializable {
             }
         });
     }
-
 
     public void updateTabTitle(Tab tab) {
         webEngine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
@@ -215,6 +217,17 @@ public class HomePageController implements Initializable {
         });
     }
 
+    public void searchHistoryByURL(){
+        setURL();
+        LoadURL();
+        webEngine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
+            if (newState == Worker.State.SUCCEEDED) {
+                progressBar.progressProperty().bind(webEngine.getLoadWorker().progressProperty());
+            }
+        });
+
+    }
+
     public void setDataOnDB() {
         webEngine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
             if (newState == Worker.State.SUCCEEDED) {
@@ -234,6 +247,22 @@ public class HomePageController implements Initializable {
         });
     }
 
+    public void setTabPageController(TabPageController tabPageController) {
+        this.tabPageController = tabPageController;
+    }
+
+    @FXML
+    void showHistoryPage(ActionEvent event) {
+        if (tabPageController != null) {
+            System.out.println("Creating History Tab");
+            tabPageController.createHistoryTab();
+        } else {
+            System.err.println("TabPageController is not initialized.2");
+        }
+    }
+
+
+
 
 
     @Override
@@ -249,6 +278,7 @@ public class HomePageController implements Initializable {
         setupKeyShortcuts(ZoomOutButton, new KeyCodeCombination(KeyCode.MINUS, KeyCombination.CONTROL_DOWN));
         setupKeyShortcuts(backButton, new KeyCodeCombination(KeyCode.B, KeyCombination.CONTROL_DOWN));
         setupKeyShortcuts(forwardButton, new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN));
+        setupKeyShortcuts(historyButton, new KeyCodeCombination(KeyCode.H, KeyCombination.CONTROL_DOWN));
 
         showOnCurrentSiteOnTerminal();
         setDataOnDB();

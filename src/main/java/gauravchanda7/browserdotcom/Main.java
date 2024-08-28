@@ -16,12 +16,12 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         DBController db = new DBController();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("tabpage.fxml"));
+        final FXMLLoader loader = new FXMLLoader(getClass().getResource("tabpage.fxml"));
         Parent root = loader.load();
 
         Scene scene = new Scene(root);
 
-        InputStream iconStream = getClass().getResourceAsStream("Logo.png");
+        final InputStream iconStream = getClass().getResourceAsStream("Logo.png");
         if (iconStream != null) {
             Image icon = new Image(iconStream);
             stage.getIcons().add(icon);

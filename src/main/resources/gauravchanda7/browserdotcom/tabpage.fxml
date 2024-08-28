@@ -4,9 +4,9 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane fx:id="anchorPane" prefHeight="670.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gauravchanda7.browserdotcom.TabPageController">
+<AnchorPane fx:id="anchorPane" prefHeight="670.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gauravchanda7.browserdotcom.TabPageController">
    <children>
-      <TabPane fx:id="tabPane" prefHeight="670.0" prefWidth="960.0" tabClosingPolicy="ALL_TABS">
+      <TabPane fx:id="tabPane" prefHeight="670.0" prefWidth="1000.0" tabClosingPolicy="ALL_TABS">
         <tabs>
           <Tab fx:id="homeTab" text="Tab1" />
             <Tab fx:id="newTab" closable="false" text="➕" />
